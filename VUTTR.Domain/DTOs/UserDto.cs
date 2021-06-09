@@ -9,7 +9,7 @@ namespace VUTTR.Domain.DTOs
         public UserDto(User user)
         {
             this.UserId = user.UserId;
-            this.UserName = user.FullName;
+            this.UserName = user.UserName;
             this.Password = user.Password;
             this.FullName = user.FullName;
             this.RefreshToken = user.RefreshToken;

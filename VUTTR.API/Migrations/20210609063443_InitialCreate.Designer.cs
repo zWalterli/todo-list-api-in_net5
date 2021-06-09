@@ -10,8 +10,8 @@ using VUTTR.Data.Context;
 namespace VUTTR.API.Migrations
 {
     [DbContext(typeof(VUTTRContext))]
-    [Migration("20210609021535_inicial")]
-    partial class inicial
+    [Migration("20210609063443_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -1,12 +1,11 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using VUTTR.Domain.DTOs;
 
 namespace VUTTR.Domain.Models
 {
     public class User
     {
+        #region Constructor
         public User() {}
         public User(UserDto user)
         {
@@ -22,9 +21,7 @@ namespace VUTTR.Domain.Models
             RefreshToken = refreshToken;
             RefreshTokenExpiryTime = refreshTokenExpiryTime;
         }
-
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        #endregion
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }

@@ -85,7 +85,7 @@ namespace VUTTR.API
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
                     In = ParameterLocation.Header, 
-                    Description = "Please insert JWT with Bearer into field",
+                    Description = "Enter the Jwt code in the field below.",
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey 
                 });

@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using VUTTR.Domain.DTOs;
 
 namespace VUTTR.Domain.Models
@@ -31,8 +29,6 @@ namespace VUTTR.Domain.Models
         }
         #endregion
 
-        [Key]  
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]  
         public int id { get; set; }
         public string title { get; set; }
         public string link { get; set; }
