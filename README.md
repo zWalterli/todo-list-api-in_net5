@@ -35,11 +35,11 @@ The following tools were used in the construction of the project:
 ## Clone this repository
     git clone git@github.com:zWalterli/VUTTR.git
 
-## Run the migrations
-    dotnet ef database update
-
 ## Navigate to the folder
     cd VUTTR/VUTTR.API/
+
+## Run the migrations
+    dotnet ef database update
     
 ## Run the API
     dotnet run
