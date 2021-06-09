@@ -5,7 +5,6 @@ namespace VUTTR.Domain.Models
 {
     public class Tool
     {
-
         #region Constructor            
         public Tool() { }
         public Tool(ToolDto toolDto)
