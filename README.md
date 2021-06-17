@@ -1,4 +1,4 @@
-# UsefulTools
+# VUTTR
 Very Useful Tools to Remember
 
 Simple repository to manage tools with their respective names, links, descriptions and tags.
