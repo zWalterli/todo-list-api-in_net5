@@ -2,7 +2,7 @@
 Very Useful Tools to Remember
 
 Simple repository to manage tools with their respective names, links, descriptions and tags.
-The graphical interface of this project is (here)[https://github.com/zWalterli/VUTTR.UI].
+The graphical interface of this project is [here](https://github.com/zWalterli/VUTTR.UI).
 
 Table of Contents
 =================
