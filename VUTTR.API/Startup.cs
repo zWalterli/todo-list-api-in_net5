@@ -60,15 +60,11 @@ namespace VUTTR.API
                     .RequireAuthenticatedUser().Build());
             });
 
-            services.AddCors(options => options.AddDefaultPolicy(builder => {
-                builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-            }));
-
             services.AddDbContext<VUTTRContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                                     b => b.MigrationsAssembly("VUTTR.API")));
+
+            services.AddCors();
 
             services.AddScoped<IToolService, ToolService>();
             services.AddScoped<IToolRepository, ToolRepository>();
@@ -121,6 +117,8 @@ namespace VUTTR.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {

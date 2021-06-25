@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VUTTR.Domain.DTOs;
 using VUTTR.Service.Interfaces.Interfaces;
@@ -21,6 +22,9 @@ namespace VUTTR.API.Controllers
         }
         
         [HttpGet]
+        [ProducesResponseType(typeof(List<ToolDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<List<ToolDto>>> GetByTag([FromQuery]string tag = null)
         {
             try
@@ -42,6 +46,9 @@ namespace VUTTR.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult> Post([FromBody] ToolDto dto)
         {
             try
@@ -59,6 +66,9 @@ namespace VUTTR.API.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<ToolDto>> Put([FromBody] ToolDto dto)
         {
             try
@@ -66,7 +76,8 @@ namespace VUTTR.API.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest("Modelo passado como parâmetro é inválido!");
 
-                return Ok(await _ToolService.Update(dto));
+                await _ToolService.Update(dto);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -74,7 +85,10 @@ namespace VUTTR.API.Controllers
             }
         }
 
-        [HttpDelete("{ToolId:int}")]
+        [HttpDelete("{ToolId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<bool>> Delete([FromRoute] int ToolId)
         {
             try
