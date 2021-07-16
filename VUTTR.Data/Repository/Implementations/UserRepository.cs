@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,8 +44,7 @@ namespace VUTTR.Data.Repository.Implementations
         {
             try
             {
-                var result = await _ctx.Users
-                                    .FirstOrDefaultAsync(u => u.UserId.Equals(user.UserId));
+                var result = await GetById(user.UserId);
                 if (result != null)
                 {
                     _ctx.Entry(result).CurrentValues.SetValues(user);
@@ -57,6 +57,28 @@ namespace VUTTR.Data.Repository.Implementations
             {
                 throw;
             }
+        }
+
+        public async Task<User> GetByUserName(string username)
+        {
+            return await _ctx.Users
+                        .FirstOrDefaultAsync(u => u.UserName.Contains(username));
+        }
+
+        public async Task<User> Update(User user)
+        {
+            var result = await _ctx.Users
+                        .FirstOrDefaultAsync(t => t.UserId.Equals(user.UserId));
+
+            _ctx.Entry(result).CurrentValues.SetValues(user);
+            await _ctx.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User> GetById(int UserId)
+        {
+            return await _ctx.Users
+                                    .FirstOrDefaultAsync(u => u.UserId.Equals(UserId));
         }
     }
 }

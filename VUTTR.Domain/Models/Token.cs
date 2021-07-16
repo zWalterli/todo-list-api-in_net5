@@ -16,5 +16,6 @@ namespace VUTTR.Domain.Models
         public string Expiration { get; set; }
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
+        public virtual User User { get; set; }
     }
 }

@@ -96,6 +96,14 @@ namespace VUTTR.Data.Repository.Implementations
 
         public async Task<Tool> Update(Tool model)
         {
+            List<Tag> tags = _ctx.Tags.Where(x => x.Tool.id == model.id).ToList();
+
+            // Deleto todas as TAGS da Tool
+            tags.ForEach(tag => _ctx.Remove(tag));
+
+            // Incluo as TAGS que vieram na model
+            model.Tags.ForEach(tag => _ctx.Add(tag));
+
             _ctx.Update(model).State = EntityState.Modified;
             await _ctx.SaveChangesAsync();
             return model;

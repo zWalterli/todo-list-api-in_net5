@@ -50,20 +50,56 @@ namespace VUTTR.Service.Interfaces.Implementations
             DateTime createDate = DateTime.Now;
             DateTime ExpirationDate = createDate.AddMinutes(_configuration.Minutes);
 
+            userModel.Password = null;
             return new TokenDto(
                 true,
                 createDate.ToString(DATE_FORMAT),
                 ExpirationDate.ToString(DATE_FORMAT),
                 accessToken,
-                refreshToken
+                refreshToken,
+                new UserDto(userModel)
                 );
         }
 
         public async Task<UserDto> Register(UserDto user)
         {
             User model = new User(user);
+            UserDto modelUserName = await this.GetByUserName(user.UserName);
+            if(modelUserName != null)
+                throw new Exception("Usuário já existente!");
+
             model.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
             return new UserDto(await _userRepository.Register(model));
+        }
+
+        public async Task<UserDto> Update(UserDto user)
+        {
+            if(user.Password == null) {
+                var modelComPassword = await this.GetById(user.UserId, true);
+                user.Password = modelComPassword.Password;
+            } else {
+                user.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
+            }
+            User model = new User(user);
+            return new UserDto(await _userRepository.Update(model));
+        }
+
+        public async Task<UserDto> GetById(int UserId, bool includePassword)
+        {
+            User model = await _userRepository.GetById(UserId);
+            if(!includePassword)
+                model.Password = null;
+            
+            return new UserDto(model);
+        }
+
+        public async Task<UserDto> GetByUserName(string userName)
+        {
+            User model = await _userRepository.GetByUserName(userName);
+            if(model == null) {
+                return null;
+            }
+            return new UserDto(model);
         }
     }
 }
