@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -28,6 +29,10 @@ namespace VUTTR.Service.Interfaces.Implementations
         }
         public async Task<TokenDto> Login(UserDto user)
         {
+            user.Password = await Task.Run( () => {
+                return Base64ToString(user.Password);
+            });
+            
             User model = new User(user);
             User userModel = await _userRepository.Login(model);
 
@@ -61,8 +66,18 @@ namespace VUTTR.Service.Interfaces.Implementations
                 );
         }
 
+        private async Task<string> Base64ToString(string base64)
+        {
+            var valueBytes = System.Convert.FromBase64String(base64);
+            return Encoding.UTF8.GetString(valueBytes);
+        }
+
         public async Task<UserDto> Register(UserDto user)
         {
+            user.Password = await Task.Run( () => {
+                return Base64ToString(user.Password);
+            });
+
             User model = new User(user);
             UserDto modelUserName = await this.GetByUserName(user.UserName);
             if(modelUserName != null)
