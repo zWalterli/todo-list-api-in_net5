@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 using VUTTR.Service.Interfaces.Interfaces;
 
 namespace VUTTR.API.Controllers
@@ -20,7 +20,7 @@ namespace VUTTR.API.Controllers
 
         [HttpGet("{UserId}")]
         [Authorize("Bearer")]
-        public async Task<ActionResult<UserDto>> GetById([FromRoute] int UserId)
+        public async Task<ActionResult<UserViewModel>> GetById([FromRoute] int UserId)
         {
             try
             {  
@@ -33,7 +33,7 @@ namespace VUTTR.API.Controllers
         } 
 
         [HttpPost("login")]
-        public async Task<ActionResult<TokenDto>> Login([FromBody] UserDto user)
+        public async Task<ActionResult<TokenViewModel>> Login([FromBody] UserViewModel user)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace VUTTR.API.Controllers
         } 
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register([FromBody] UserDto user)
+        public async Task<ActionResult<UserViewModel>> Register([FromBody] UserViewModel user)
         {
             try
             {  
@@ -68,7 +68,7 @@ namespace VUTTR.API.Controllers
 
         [HttpPut]
         [Authorize("Bearer")]
-        public async Task<ActionResult<UserDto>> Update([FromBody] UserDto user)
+        public async Task<ActionResult<UserViewModel>> Update([FromBody] UserViewModel user)
         {
             try
             {  

@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 
 namespace VUTTR.Service.Interfaces.Interfaces
 {
     public interface IToolService
     {
-        Task<List<ToolDto>> GetAll();
-        Task<ToolDto> GetById(int ToolId);
-        Task<List<ToolDto>> GetByTag(string search);
-        Task<ToolDto> Insert(ToolDto Obj);
-        Task<ToolDto> Update(ToolDto Obj);
+        Task<List<ToolViewModel>> GetAll();
+        Task<ToolViewModel> GetById(int ToolId);
+        Task<List<ToolViewModel>> GetByTag(string search);
+        Task<ToolViewModel> Insert(ToolViewModel Obj);
+        Task<ToolViewModel> Update(ToolViewModel Obj);
         Task<bool> Delete(int ToolId);
     }
 }

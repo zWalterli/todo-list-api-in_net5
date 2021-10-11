@@ -1,5 +1,5 @@
 using System;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 
 namespace VUTTR.Domain.Models
 {
@@ -7,7 +7,7 @@ namespace VUTTR.Domain.Models
     {
         #region Constructor
         public User() {}
-        public User(UserDto user)
+        public User(UserViewModel user)
         {
             this.UserId = user.UserId;
             this.UserName = user.UserName;

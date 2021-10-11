@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using VUTTR.Data.Repository.Interfaces;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 using VUTTR.Domain.Models;
 using VUTTR.Service.Configuration;
 using VUTTR.Service.Interfaces.Interfaces;
@@ -27,7 +27,7 @@ namespace VUTTR.Service.Interfaces.Implementations
             _tokenService = ServiceToken;
             _configuration = configuration;
         }
-        public async Task<TokenDto> Login(UserDto user)
+        public async Task<TokenViewModel> Login(UserViewModel user)
         {
             user.Password = await Task.Run( () => {
                 return Base64ToString(user.Password);
@@ -56,13 +56,13 @@ namespace VUTTR.Service.Interfaces.Implementations
             DateTime ExpirationDate = createDate.AddMinutes(_configuration.Minutes);
 
             userModel.Password = null;
-            return new TokenDto(
+            return new TokenViewModel(
                 true,
                 createDate.ToString(DATE_FORMAT),
                 ExpirationDate.ToString(DATE_FORMAT),
                 accessToken,
                 refreshToken,
-                new UserDto(userModel)
+                new UserViewModel(userModel)
                 );
         }
 
@@ -72,22 +72,22 @@ namespace VUTTR.Service.Interfaces.Implementations
             return Encoding.UTF8.GetString(valueBytes);
         }
 
-        public async Task<UserDto> Register(UserDto user)
+        public async Task<UserViewModel> Register(UserViewModel user)
         {
             user.Password = await Task.Run( () => {
                 return Base64ToString(user.Password);
             });
 
             User model = new User(user);
-            UserDto modelUserName = await this.GetByUserName(user.UserName);
+            UserViewModel modelUserName = await this.GetByUserName(user.UserName);
             if(modelUserName != null)
                 throw new Exception("Usuário já existente!");
 
             model.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
-            return new UserDto(await _userRepository.Register(model));
+            return new UserViewModel(await _userRepository.Register(model));
         }
 
-        public async Task<UserDto> Update(UserDto user)
+        public async Task<UserViewModel> Update(UserViewModel user)
         {
             if(user.Password == null) {
                 var modelComPassword = await this.GetById(user.UserId, true);
@@ -96,25 +96,25 @@ namespace VUTTR.Service.Interfaces.Implementations
                 user.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
             }
             User model = new User(user);
-            return new UserDto(await _userRepository.Update(model));
+            return new UserViewModel(await _userRepository.Update(model));
         }
 
-        public async Task<UserDto> GetById(int UserId, bool includePassword)
+        public async Task<UserViewModel> GetById(int UserId, bool includePassword)
         {
             User model = await _userRepository.GetById(UserId);
             if(!includePassword)
                 model.Password = null;
             
-            return new UserDto(model);
+            return new UserViewModel(model);
         }
 
-        public async Task<UserDto> GetByUserName(string userName)
+        public async Task<UserViewModel> GetByUserName(string userName)
         {
             User model = await _userRepository.GetByUserName(userName);
             if(model == null) {
                 return null;
             }
-            return new UserDto(model);
+            return new UserViewModel(model);
         }
     }
 }

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using VUTTR.Domain.Models;
 
-namespace VUTTR.Domain.DTOs
+namespace VUTTR.Domain.ViewModels
 {
-    public class ToolDto
+    public class ToolViewModel
     {
-        public ToolDto() { }
-        public ToolDto(Tool toolModel)
+        public ToolViewModel() { }
+        public ToolViewModel(Tool toolModel)
         {
             this.id = toolModel.id;
             this.title = toolModel.title;

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 
 namespace VUTTR.Domain.Models
 {
@@ -7,7 +7,7 @@ namespace VUTTR.Domain.Models
     {
         #region Constructor            
         public Tool() { }
-        public Tool(ToolDto toolDto)
+        public Tool(ToolViewModel toolDto)
         {
             this.id = toolDto.id;
             this.title = toolDto.title;

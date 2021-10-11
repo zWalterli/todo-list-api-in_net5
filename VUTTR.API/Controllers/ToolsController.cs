@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 using VUTTR.Service.Interfaces.Interfaces;
 
 namespace VUTTR.API.Controllers
@@ -22,10 +22,10 @@ namespace VUTTR.API.Controllers
         }
         
         [HttpGet]
-        [ProducesResponseType(typeof(List<ToolDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<ToolViewModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<List<ToolDto>>> GetByTag([FromQuery]string tag = null)
+        public async Task<ActionResult<List<ToolViewModel>>> GetByTag([FromQuery] string tag = null)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace VUTTR.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult> Post([FromBody] ToolDto dto)
+        public async Task<ActionResult> Post([FromBody] ToolViewModel dto)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace VUTTR.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ToolDto>> Put([FromBody] ToolDto dto)
+        public async Task<ActionResult<ToolViewModel>> Put([FromBody] ToolViewModel dto)
         {
             try
             {

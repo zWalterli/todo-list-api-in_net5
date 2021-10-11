@@ -1,12 +1,12 @@
 using System;
 using VUTTR.Domain.Models;
 
-namespace VUTTR.Domain.DTOs
+namespace VUTTR.Domain.ViewModels
 {
-    public class UserDto
+    public class UserViewModel
     {
-        public UserDto() {}
-        public UserDto(User user)
+        public UserViewModel() {}
+        public UserViewModel(User user)
         {
             this.UserId = user.UserId;
             this.UserName = user.UserName;
@@ -15,7 +15,7 @@ namespace VUTTR.Domain.DTOs
             this.RefreshToken = user.RefreshToken;
             this.RefreshTokenExpiryTime = user.RefreshTokenExpiryTime;
         }
-        public UserDto(string refreshToken, DateTime refreshTokenExpiryTime)
+        public UserViewModel(string refreshToken, DateTime refreshTokenExpiryTime)
         {
             RefreshToken = refreshToken;
             RefreshTokenExpiryTime = refreshTokenExpiryTime;

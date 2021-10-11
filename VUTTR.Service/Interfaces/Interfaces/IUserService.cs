@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 
 namespace VUTTR.Service.Interfaces.Interfaces
 {
     public interface IUserService
     {
-        Task<TokenDto> Login(UserDto user);
-        Task<UserDto> Register(UserDto user);
-        Task<UserDto> Update(UserDto user);
-        Task<UserDto> GetById(int UserId, bool includePassword);
+        Task<TokenViewModel> Login(UserViewModel user);
+        Task<UserViewModel> Register(UserViewModel user);
+        Task<UserViewModel> Update(UserViewModel user);
+        Task<UserViewModel> GetById(int UserId, bool includePassword);
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VUTTR.Data.Repository.Interfaces;
-using VUTTR.Domain.DTOs;
+using VUTTR.Domain.ViewModels;
 using VUTTR.Domain.Models;
 using VUTTR.Service.Interfaces.Interfaces;
 
@@ -22,19 +22,19 @@ namespace VUTTR.Service.Interfaces.Implementations
             return _toolRepository.Delete(ToolId);
         }
 
-        public async Task<List<ToolDto>> GetAll()
+        public async Task<List<ToolViewModel>> GetAll()
         {
             List<Tool> toolsModel = await _toolRepository.GetAll();
             return ConverterListModelToDto(toolsModel);
         }
 
-        public async Task<ToolDto> GetById(int ToolId)
+        public async Task<ToolViewModel> GetById(int ToolId)
         {
             Tool toolsModel = await _toolRepository.GetById(ToolId);
             return ConverterModelToDto(toolsModel);
         }
 
-        public async Task<List<ToolDto>> GetByTag(string search)
+        public async Task<List<ToolViewModel>> GetByTag(string search)
         {
             List<Tool> listToolsFilter = new List<Tool>();
             List<Tool> toolsListModel = await _toolRepository.GetByTag(search);
@@ -45,31 +45,37 @@ namespace VUTTR.Service.Interfaces.Implementations
             return ConverterListModelToDto(listToolsFilter);
         }
 
-        public async Task<ToolDto> Insert(ToolDto Obj)
+        public async Task<ToolViewModel> Insert(ToolViewModel Obj)
         {
             Tool objModel = new Tool(Obj);
             return ConverterModelToDto(await _toolRepository.Insert(objModel));
         }
 
-        public async Task<ToolDto> Update(ToolDto Obj)
+        public async Task<ToolViewModel> Update(ToolViewModel Obj)
         {
             Tool objModel = new Tool(Obj);
             return ConverterModelToDto(await _toolRepository.Update(objModel));
         }
 
-        private List<ToolDto> ConverterListModelToDto(List<Tool> listTools)
+        private List<ToolViewModel> ConverterListModelToDto(List<Tool> listTools)
         {
-            List<ToolDto> toolsDto = new List<ToolDto>();
+            List<ToolViewModel> toolsDto = new List<ToolViewModel>();
+            if(listTools == null)
+                return toolsDto;
+
             foreach (var tool in listTools)
             {
-                ToolDto dto = new ToolDto(tool);
+                ToolViewModel dto = new ToolViewModel(tool);
                 toolsDto.Add(dto);
             }
             return toolsDto;
         }
-        private ToolDto ConverterModelToDto(Tool tool)
+        private ToolViewModel ConverterModelToDto(Tool tool)
         {
-            return new ToolDto(tool);
+            if(tool == null)
+                return new ToolViewModel();
+
+            return new ToolViewModel(tool);
         }
     }
 }

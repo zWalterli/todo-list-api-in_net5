@@ -16,6 +16,9 @@ using VUTTR.Service.Interfaces.Interfaces;
 using VUTTR.Service.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.IO;
+using AutoMapper;
+using VUTTR.API.Configurations;
 
 namespace VUTTR.API
 {
@@ -25,6 +28,10 @@ namespace VUTTR.API
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+            Configuration = builder.Build();
         }
         public void ConfigureServices(IServiceCollection services)
         {
@@ -34,6 +41,10 @@ namespace VUTTR.API
                 ).Configure(tokenConfigurations);
 
             services.AddSingleton(tokenConfigurations);
+
+            var mapperConfig = new MapperConfiguration(mc => mc.AddProfile(new MapConfiguration()) );
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             services.AddAuthentication(options =>
             {
@@ -60,9 +71,10 @@ namespace VUTTR.API
                     .RequireAuthenticatedUser().Build());
             });
 
+            var connectionString = Configuration.GetConnectionString("DefaultConnectionExpress");
+
             services.AddDbContext<VUTTRContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                                    b => b.MigrationsAssembly("VUTTR.API")));
+                options.UseSqlServer( connectionString, b => b.MigrationsAssembly("VUTTR.API")));
 
             services.AddCors();
 

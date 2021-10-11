@@ -23,6 +23,8 @@ namespace VUTTR.Data.Repository.Implementations
             try
             {
                 Tool model = await this.GetById(ToolId);
+                if(model == null) return true;
+                    
                 _ctx.Remove(model);
                 return (await _ctx.SaveChangesAsync() > 0 );
             }
