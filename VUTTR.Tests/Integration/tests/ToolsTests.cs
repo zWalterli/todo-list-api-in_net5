@@ -33,7 +33,17 @@ namespace VUTTR.Tests.Integration.Tests
                 title = "teste",
                 link = "www.teste.com.br",
                 description = "teste",
-                Tags = new List<string> { "teste1", "teste2", "teste3" }
+                Tags = new List<TagViewModel>
+                {
+                    new TagViewModel
+                    {
+                        description = "outro"
+                    },
+                    new TagViewModel
+                    {
+                        description = "teste"
+                    }
+                }
             };
             
             var json = JsonConvert.SerializeObject(dto);
@@ -51,7 +61,23 @@ namespace VUTTR.Tests.Integration.Tests
                 title = "GitHub",
                 link = "www.github.com.br",
                 description = "Ferramenta para realizar o versionamento de códigos fontes.",
-                Tags = new List<string> {"gitlab", "dev", "versionamento"}
+                Tags = new List<TagViewModel> {
+                    new TagViewModel
+                    {
+                        id = 49,
+                        description = "gitlab"
+                    },
+                    new TagViewModel
+                    {
+                        id = 50,
+                        description = "dev"
+                    },
+                    new TagViewModel
+                    {
+                        id = 51,
+                        description = "versionamento"
+                    }
+                }
             };
             
             var json = JsonConvert.SerializeObject(dto);

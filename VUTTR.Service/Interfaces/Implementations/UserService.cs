@@ -10,19 +10,20 @@ using VUTTR.Domain.ViewModels;
 using VUTTR.Domain.Models;
 using VUTTR.Service.Configuration;
 using VUTTR.Service.Interfaces.Interfaces;
+using AutoMapper;
 
 namespace VUTTR.Service.Interfaces.Implementations
 {
     public class UserService : IUserService
     {
+        private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
         private TokenConfigurations _configuration;
         private const string DATE_FORMAT = "yyy-MM-dd HH:mm:ss";
-
-
-        public UserService(IUserRepository repo, ITokenService ServiceToken, TokenConfigurations configuration)
+        public UserService(IUserRepository repo, ITokenService ServiceToken, TokenConfigurations configuration, IMapper map)
         {
+            _mapper = map;
             _userRepository = repo;
             _tokenService = ServiceToken;
             _configuration = configuration;
@@ -62,7 +63,7 @@ namespace VUTTR.Service.Interfaces.Implementations
                 ExpirationDate.ToString(DATE_FORMAT),
                 accessToken,
                 refreshToken,
-                new UserViewModel(userModel)
+                _mapper.Map<UserViewModel>(userModel)
                 );
         }
 
@@ -84,7 +85,7 @@ namespace VUTTR.Service.Interfaces.Implementations
                 throw new Exception("Usuário já existente!");
 
             model.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
-            return new UserViewModel(await _userRepository.Register(model));
+            return _mapper.Map<UserViewModel>(await _userRepository.Register(model));
         }
 
         public async Task<UserViewModel> Update(UserViewModel user)
@@ -96,7 +97,7 @@ namespace VUTTR.Service.Interfaces.Implementations
                 user.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
             }
             User model = new User(user);
-            return new UserViewModel(await _userRepository.Update(model));
+            return _mapper.Map<UserViewModel>(await _userRepository.Update(model));
         }
 
         public async Task<UserViewModel> GetById(int UserId, bool includePassword)
@@ -105,7 +106,7 @@ namespace VUTTR.Service.Interfaces.Implementations
             if(!includePassword)
                 model.Password = null;
             
-            return new UserViewModel(model);
+            return _mapper.Map<UserViewModel>(model);
         }
 
         public async Task<UserViewModel> GetByUserName(string userName)
@@ -114,7 +115,7 @@ namespace VUTTR.Service.Interfaces.Implementations
             if(model == null) {
                 return null;
             }
-            return new UserViewModel(model);
+            return _mapper.Map<UserViewModel>(model);
         }
     }
 }

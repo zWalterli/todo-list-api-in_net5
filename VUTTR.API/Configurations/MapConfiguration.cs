@@ -22,7 +22,7 @@ namespace VUTTR.API.Configurations
         {
             #region Tool
             CreateMap<ToolViewModel, Tool>()
-                .ForMember(d => d.Tags, o => o.MapFrom(src => ConvertListStringToListTag(src.Tags)))
+                .ForMember(d => d.Tags, o => o.MapFrom(src => src.Tags))
                 .ReverseMap();
             #endregion
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Moq;
 using VUTTR.Data.Repository.Interfaces;
 using VUTTR.Domain.Models;
@@ -13,19 +14,36 @@ namespace VUTTR.Tests.Unitary.tests
 {
     public class ToolsServiceTest
     {
+        private readonly Mock<IMapper> _mapper;
         private readonly ToolMock _toolMock;
         private readonly Mock<IToolRepository> _toolRep;
         private readonly IToolService _toolService;
         public ToolsServiceTest()
         {
+            _mapper = new Mock<IMapper>();
             _toolMock = new ToolMock();
             _toolRep = new Mock<IToolRepository>();
             Setup();
-            _toolService = new ToolService(_toolRep.Object);
+            _toolService = new ToolService(_toolRep.Object, _mapper.Object);
         }
 
         private void Setup()
         {
+            #region IMapper
+            _mapper.Setup(x => x.Map<List<ToolViewModel>>( It.IsAny<List<Tool>>() ))
+                .Returns(_toolMock.GetListToolsViewModelMock());
+                
+            _mapper.Setup(x => x.Map<List<Tool>>( It.IsAny<List<ToolViewModel>>() ))
+                .Returns(_toolMock.GetListToolsMock());
+                
+            _mapper.Setup(x => x.Map<ToolViewModel>( It.IsAny<Tool>() ))
+                .Returns(_toolMock.GetToolViewModelMock(1));
+                
+            _mapper.Setup(x => x.Map<Tool>( It.IsAny<ToolViewModel>() ))
+                .Returns(_toolMock.GetToolMock(2));
+            #endregion
+
+            #region ToolRepository
             _toolRep.Setup(x => x.GetAll())
                 .Returns(Task.FromResult( _toolMock.GetListToolsMock() ));
 
@@ -43,6 +61,7 @@ namespace VUTTR.Tests.Unitary.tests
 
             _toolRep.Setup(x => x.Update( It.IsAny<Tool>() ))
                 .Returns(Task.FromResult( _toolMock.GetToolMock(2) ));
+            #endregion
         }
 
         [Fact]
@@ -69,14 +88,14 @@ namespace VUTTR.Tests.Unitary.tests
         [Fact]
         public async Task Insert_ReturnWithOneToolInserting()
         {
-            ToolViewModel Tool = await _toolService.Insert(new ToolViewModel( _toolMock.GetToolMock(1) ));
+            ToolViewModel Tool = await _toolService.Insert( _mapper.Object.Map<ToolViewModel>( _toolMock.GetToolMock(1) ));
             Assert.NotNull(Tool);
         }
 
         [Fact]
         public async Task Update_ReturnWithOneToolUpdating()
         {
-            ToolViewModel Tool = await _toolService.Update(new ToolViewModel( _toolMock.GetToolMock(1) ));
+            ToolViewModel Tool = await _toolService.Update( _mapper.Object.Map<ToolViewModel>( _toolMock.GetToolMock(1) ));
             Assert.NotNull(Tool);
         }
     }
