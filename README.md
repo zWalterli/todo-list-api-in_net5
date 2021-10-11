@@ -19,7 +19,7 @@ Table of Contents
 
 - [x] CRUD Tools
 - [x] Autenticação via JWT
-- [x] Test Unitary && Integration
+- [x] Test Unitary & Integration
 - [ ] Docker
 - [ ] Azure Container Registry
 - [ ] GitHub Actions
