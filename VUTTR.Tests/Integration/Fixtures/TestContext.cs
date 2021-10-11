@@ -22,7 +22,14 @@ namespace VUTTR.Tests.Integration.Fixtures
         {
             SetupClient();
         }
-
+        private async Task SetupClient()
+        {
+            string curDir = Directory.GetCurrentDirectory();
+            _webHostBuilder = new WebHostBuilder().UseContentRoot(curDir).UseStartup<Startup>();
+            _host = new TestServer(_webHostBuilder);
+            _client = _host.CreateClient();
+            await AddAuthentication();
+        }
         private async Task AddAuthentication()
         {
             var json = JsonConvert.SerializeObject( UserAdmin );
@@ -32,15 +39,6 @@ namespace VUTTR.Tests.Integration.Fixtures
 
             TokenViewModel token = JsonConvert.DeserializeObject<TokenViewModel>(result); 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
-        }
-
-        private async Task SetupClient()
-        {
-            string curDir = Directory.GetCurrentDirectory();
-            _webHostBuilder = new WebHostBuilder().UseContentRoot(curDir).UseStartup<Startup>();
-            _host = new TestServer(_webHostBuilder);
-            _client = _host.CreateClient();
-            await AddAuthentication();
         }
     }
 }

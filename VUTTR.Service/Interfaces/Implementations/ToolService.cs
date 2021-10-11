@@ -5,15 +5,18 @@ using VUTTR.Data.Repository.Interfaces;
 using VUTTR.Domain.ViewModels;
 using VUTTR.Domain.Models;
 using VUTTR.Service.Interfaces.Interfaces;
+using AutoMapper;
 
 namespace VUTTR.Service.Interfaces.Implementations
 {
     public class ToolService : IToolService
     {
         private readonly IToolRepository _toolRepository;
+        private readonly IMapper _mapper;
 
-        public ToolService(IToolRepository repo)
+        public ToolService(IToolRepository repo, IMapper map)
         {
+            _mapper = map;
             _toolRepository = repo;
         }
 
@@ -25,13 +28,13 @@ namespace VUTTR.Service.Interfaces.Implementations
         public async Task<List<ToolViewModel>> GetAll()
         {
             List<Tool> toolsModel = await _toolRepository.GetAll();
-            return ConverterListModelToDto(toolsModel);
+            return _mapper.Map<List<ToolViewModel>>(toolsModel);
         }
 
         public async Task<ToolViewModel> GetById(int ToolId)
         {
             Tool toolsModel = await _toolRepository.GetById(ToolId);
-            return ConverterModelToDto(toolsModel);
+            return _mapper.Map<ToolViewModel>(toolsModel);
         }
 
         public async Task<List<ToolViewModel>> GetByTag(string search)
@@ -42,40 +45,22 @@ namespace VUTTR.Service.Interfaces.Implementations
             // removendo itens iguais
             listToolsFilter = toolsListModel.Distinct().ToList();
             
-            return ConverterListModelToDto(listToolsFilter);
+            return _mapper.Map<List<ToolViewModel>>(listToolsFilter);
         }
 
         public async Task<ToolViewModel> Insert(ToolViewModel Obj)
         {
-            Tool objModel = new Tool(Obj);
-            return ConverterModelToDto(await _toolRepository.Insert(objModel));
+            Tool objModel = _mapper.Map<Tool>(Obj);
+            return _mapper.Map<ToolViewModel>(await _toolRepository.Insert(objModel));
         }
 
         public async Task<ToolViewModel> Update(ToolViewModel Obj)
         {
-            Tool objModel = new Tool(Obj);
-            return ConverterModelToDto(await _toolRepository.Update(objModel));
-        }
+            Tool objModel = _mapper.Map<Tool>(Obj);
+            foreach (var tag in objModel.Tags)
+                tag.Tool = objModel;
 
-        private List<ToolViewModel> ConverterListModelToDto(List<Tool> listTools)
-        {
-            List<ToolViewModel> toolsDto = new List<ToolViewModel>();
-            if(listTools == null)
-                return toolsDto;
-
-            foreach (var tool in listTools)
-            {
-                ToolViewModel dto = new ToolViewModel(tool);
-                toolsDto.Add(dto);
-            }
-            return toolsDto;
-        }
-        private ToolViewModel ConverterModelToDto(Tool tool)
-        {
-            if(tool == null)
-                return new ToolViewModel();
-
-            return new ToolViewModel(tool);
+            return _mapper.Map<ToolViewModel>(await _toolRepository.Update(objModel));
         }
     }
 }

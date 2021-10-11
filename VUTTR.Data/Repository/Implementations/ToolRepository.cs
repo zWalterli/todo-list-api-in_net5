@@ -98,15 +98,19 @@ namespace VUTTR.Data.Repository.Implementations
 
         public async Task<Tool> Update(Tool model)
         {
-            List<Tag> tags = _ctx.Tags.Where(x => x.Tool.id == model.id).ToList();
+            List<Tag> tags = _ctx.Tags
+                .AsNoTracking()
+                .Where(x => x.Tool.id == model.id)
+                .ToList();
+            
+            var tagsDeleted = tags.Where(x => model.Tags.All( x2 => x2.id != x.id )).ToList();
 
-            // Deleto todas as TAGS da Tool
-            tags.ForEach(tag => _ctx.Remove(tag));
+            _ctx.Entry(model).State = EntityState.Detached;
+            _ctx.Update(model);
 
-            // Incluo as TAGS que vieram na model
-            model.Tags.ForEach(tag => _ctx.Add(tag));
-
-            _ctx.Update(model).State = EntityState.Modified;
+            // Deleto todas as TAGS que foram deletadas da Tool
+            tagsDeleted.ForEach(tag => _ctx.Remove(tag));
+            
             await _ctx.SaveChangesAsync();
             return model;
         }
