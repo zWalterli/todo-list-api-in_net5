@@ -34,7 +34,7 @@ namespace VUTTR.Service.Interfaces.Implementations
                 return Base64ToString(user.Password);
             });
             
-            User model = new User(user);
+            User model = _mapper.Map<User>(user);
             User userModel = await _userRepository.Login(model);
 
             if (userModel == null) return null;
@@ -79,7 +79,7 @@ namespace VUTTR.Service.Interfaces.Implementations
                 return Base64ToString(user.Password);
             });
 
-            User model = new User(user);
+            User model = _mapper.Map<User>(user);
             UserViewModel modelUserName = await this.GetByUserName(user.UserName);
             if(modelUserName != null)
                 throw new Exception("Usuário já existente!");
@@ -96,7 +96,7 @@ namespace VUTTR.Service.Interfaces.Implementations
             } else {
                 user.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
             }
-            User model = new User(user);
+            User model = _mapper.Map<User>(user);
             return _mapper.Map<UserViewModel>(await _userRepository.Update(model));
         }
 
