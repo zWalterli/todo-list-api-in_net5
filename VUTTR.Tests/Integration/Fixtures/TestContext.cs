@@ -19,10 +19,8 @@ namespace VUTTR.Tests.Integration.Fixtures
         private TestServer _host;
         private UserViewModel UserAdmin = new UserViewModel { UserName = "admin", Password = "YWRtaW4=" };
         public TestContext()
-        {
-            SetupClient();
-        }
-        private async Task SetupClient()
+        { }
+        public async Task SetupClient()
         {
             string curDir = Directory.GetCurrentDirectory();
             _webHostBuilder = new WebHostBuilder().UseContentRoot(curDir).UseStartup<Startup>();
@@ -32,13 +30,16 @@ namespace VUTTR.Tests.Integration.Fixtures
         }
         private async Task AddAuthentication()
         {
-            var json = JsonConvert.SerializeObject( UserAdmin );
-            var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-            var response = _client.PostAsync("/api/User/Login", stringContent).Result;
-            var result = response.Content.ReadAsStringAsync().Result;
+            await Task.Run(() =>
+            {
+                var json = JsonConvert.SerializeObject(UserAdmin);
+                var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+                var response = _client.PostAsync("/api/User/Login", stringContent).Result;
+                var result = response.Content.ReadAsStringAsync().Result;
 
-            TokenViewModel token = JsonConvert.DeserializeObject<TokenViewModel>(result); 
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+                TokenViewModel token = JsonConvert.DeserializeObject<TokenViewModel>(result);
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+            });
         }
     }
 }

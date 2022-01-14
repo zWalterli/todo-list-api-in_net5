@@ -21,13 +21,15 @@ namespace VUTTR.Tests.Integration.Tests
         [Fact]
         public async Task Tool_GetByTag_ReturnsOkResponse()
         {
+            await _context.SetupClient();
             var response = await _context._client.GetAsync("/api/Tools?tag=git");
-            Assert.True( response.StatusCode.Equals(HttpStatusCode.OK) );
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
         }
 
         [Fact]
         public async Task Tool_Post_ReturnsCreatedResponse()
         {
+            await _context.SetupClient();
             ToolViewModel dto = new ToolViewModel
             {
                 title = "teste",
@@ -45,16 +47,17 @@ namespace VUTTR.Tests.Integration.Tests
                     }
                 }
             };
-            
+
             var json = JsonConvert.SerializeObject(dto);
             var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
             var response = await _context._client.PostAsync("/api/Tools/", stringContent);
-            Assert.True( response.StatusCode.Equals(HttpStatusCode.Created) );
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created));
         }
 
         [Fact]
         public async Task Tool_Put_ReturnsOkResponse()
         {
+            await _context.SetupClient();
             ToolViewModel dto = new ToolViewModel
             {
                 id = 1,
@@ -64,35 +67,33 @@ namespace VUTTR.Tests.Integration.Tests
                 Tags = new List<TagViewModel> {
                     new TagViewModel
                     {
-                        id = 49,
                         description = "gitlab"
                     },
                     new TagViewModel
                     {
-                        id = 50,
                         description = "dev"
                     },
                     new TagViewModel
                     {
-                        id = 51,
                         description = "versionamento"
                     }
                 }
             };
-            
+
             var json = JsonConvert.SerializeObject(dto);
             var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
             var response = await _context._client.PutAsync("/api/Tools/", stringContent);
-            Assert.True( response.StatusCode.Equals(HttpStatusCode.OK) );
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
         }
 
         [Fact]
         public async Task Tool_Delete_ReturnsNoContentResponse()
         {
+            await _context.SetupClient();
             var response = await _context._client.DeleteAsync("/api/Tools/3");
             var scResponse = (int)response.StatusCode;
             var scHttp = (int)HttpStatusCode.NoContent;
-            Assert.True( scResponse == scHttp );
+            Assert.True(scResponse == scHttp);
         }
     }
 }

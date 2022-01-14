@@ -23,10 +23,10 @@ namespace VUTTR.Data.Repository.Implementations
             try
             {
                 Tool model = await this.GetById(ToolId);
-                if(model == null) return true;
-                    
+                if (model == null) return true;
+
                 _ctx.Remove(model);
-                return (await _ctx.SaveChangesAsync() > 0 );
+                return (await _ctx.SaveChangesAsync() > 0);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace VUTTR.Data.Repository.Implementations
                 return await _ctx.Tools.Include(x => x.Tags).FirstOrDefaultAsync(x => x.id.Equals(ToolId));
             }
             catch (Exception ex)
-            {   
+            {
                 throw new Exception(ex.Message);
             }
         }
@@ -62,12 +62,13 @@ namespace VUTTR.Data.Repository.Implementations
         {
             try
             {
-                List<Tool> ToolsModel =  await this.GetAll();
-                List<Tool> listTools = new List<Tool>(); 
+                List<Tool> ToolsModel = await this.GetAll();
+                List<Tool> listTools = new List<Tool>();
 
                 ToolsModel.ForEach(
-                    tool => tool.Tags.ForEach( tag => {
-                        if (tag.description.ToLower().Contains( search.ToLower() ))
+                    tool => tool.Tags.ForEach(tag =>
+                    {
+                        if (tag.description.ToLower().Contains(search.ToLower()))
                         {
                             listTools.Add(tool);
                         }
@@ -77,7 +78,7 @@ namespace VUTTR.Data.Repository.Implementations
                 return listTools;
             }
             catch (Exception ex)
-            {   
+            {
                 throw new Exception(ex.Message);
             }
         }
@@ -91,26 +92,14 @@ namespace VUTTR.Data.Repository.Implementations
                 return model;
             }
             catch (Exception ex)
-            {   
+            {
                 throw new Exception(ex.Message);
             }
         }
 
         public async Task<Tool> Update(Tool model)
         {
-            List<Tag> tags = _ctx.Tags
-                .AsNoTracking()
-                .Where(x => x.Tool.id == model.id)
-                .ToList();
-            
-            var tagsDeleted = tags.Where(x => model.Tags.All( x2 => x2.id != x.id )).ToList();
-
-            _ctx.Entry(model).State = EntityState.Detached;
-            _ctx.Update(model);
-
-            // Deleto todas as TAGS que foram deletadas da Tool
-            tagsDeleted.ForEach(tag => _ctx.Remove(tag));
-            
+            _ctx.Tools.Update(model);
             await _ctx.SaveChangesAsync();
             return model;
         }
