@@ -2,4 +2,8 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npx lint-staged --relative
-echo "teste"
+green=`tput setaf 2`
+reset=`tput sgr0`
+echo ""
+echo "${green}Teste executados com sucesso!${reset}"
+echo ""
