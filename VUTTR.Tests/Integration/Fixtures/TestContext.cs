@@ -17,7 +17,7 @@ namespace VUTTR.Tests.Integration.Fixtures
         private IWebHostBuilder _webHostBuilder;
         public HttpClient _client { get; set; }
         private TestServer _host;
-        private UserViewModel UserAdmin = new UserViewModel { UserName = "admin", Password = "YWRtaW4=" };
+        public UserViewModel GetUserAdmin = new UserViewModel { UserName = "admin", Password = "YWRtaW4=" };
         public TestContext()
         { }
         public async Task SetupClient()
@@ -32,7 +32,7 @@ namespace VUTTR.Tests.Integration.Fixtures
         {
             await Task.Run(() =>
             {
-                var json = JsonConvert.SerializeObject(UserAdmin);
+                var json = JsonConvert.SerializeObject(GetUserAdmin);
                 var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
                 var response = _client.PostAsync("/api/User/Login", stringContent).Result;
                 var result = response.Content.ReadAsStringAsync().Result;

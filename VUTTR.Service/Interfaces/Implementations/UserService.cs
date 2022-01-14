@@ -30,15 +30,16 @@ namespace VUTTR.Service.Interfaces.Implementations
         }
         public async Task<TokenViewModel> Login(UserViewModel user)
         {
-            user.Password = await Task.Run( () => {
+            user.Password = await Task.Run(() =>
+            {
                 return Base64ToString(user.Password);
             });
-            
+
             User model = _mapper.Map<User>(user);
             User userModel = await _userRepository.Login(model);
 
             if (userModel == null) return null;
-            
+
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
@@ -67,52 +68,57 @@ namespace VUTTR.Service.Interfaces.Implementations
                 );
         }
 
-        private async Task<string> Base64ToString(string base64)
+        private Task<string> Base64ToString(string base64)
         {
             var valueBytes = System.Convert.FromBase64String(base64);
-            return Encoding.UTF8.GetString(valueBytes);
+            return Task.FromResult(Encoding.UTF8.GetString(valueBytes));
         }
 
         public async Task<UserViewModel> Register(UserViewModel user)
         {
-            user.Password = await Task.Run( () => {
+            user.Password = await Task.Run(() =>
+            {
                 return Base64ToString(user.Password);
             });
 
             User model = _mapper.Map<User>(user);
             UserViewModel modelUserName = await this.GetByUserName(user.UserName);
-            if(modelUserName != null)
+            if (modelUserName != null)
                 throw new Exception("Usuário já existente!");
 
-            model.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
+            model.Password = _userRepository.ComputeHash(user.Password, new SHA256CryptoServiceProvider());
             return _mapper.Map<UserViewModel>(await _userRepository.Register(model));
         }
 
         public async Task<UserViewModel> Update(UserViewModel user)
         {
-            if(user.Password == null) {
+            if (user.Password == null)
+            {
                 var modelComPassword = await this.GetById(user.UserId, true);
                 user.Password = modelComPassword.Password;
-            } else {
-                user.Password = _userRepository.ComputeHash( user.Password, new SHA256CryptoServiceProvider());
+            }
+            else
+            {
+                user.Password = _userRepository.ComputeHash(user.Password, new SHA256CryptoServiceProvider());
             }
             User model = _mapper.Map<User>(user);
             return _mapper.Map<UserViewModel>(await _userRepository.Update(model));
         }
 
-        public async Task<UserViewModel> GetById(int UserId, bool includePassword)
+        public async Task<UserViewModel> GetById(int UserId, bool notIncludePassword)
         {
             User model = await _userRepository.GetById(UserId);
-            if(!includePassword)
+            if (model is not null && notIncludePassword)
                 model.Password = null;
-            
+
             return _mapper.Map<UserViewModel>(model);
         }
 
         public async Task<UserViewModel> GetByUserName(string userName)
         {
             User model = await _userRepository.GetByUserName(userName);
-            if(model == null) {
+            if (model == null)
+            {
                 return null;
             }
             return _mapper.Map<UserViewModel>(model);
