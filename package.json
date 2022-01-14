@@ -1,0 +1,21 @@
+{
+  "name": "vuttr.api",
+  "version": "1.0.0",
+  "description": "Very Useful Tools to Remember",
+  "main": "index.js",
+  "scripts": {
+    "test": "dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=\"lcov%2ccobertura%2copencover\"",
+    "preinstall": "dotnet tool restore"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zWalterli/VUTTR.API.git"
+  },
+  "lint-staged": {
+    "*.cs": "dotnet format --include"
+  },
+  "devDependencies": {
+    "husky": "^7.0.0",
+    "lint-staged": "^12.1.7"
+  }
+}
