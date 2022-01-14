@@ -5,5 +5,7 @@ npx lint-staged --relative
 green=`tput setaf 2`
 reset=`tput sgr0`
 echo ""
+echo ""
 echo "${green}Teste executados com sucesso!${reset}"
+echo ""
 echo ""
