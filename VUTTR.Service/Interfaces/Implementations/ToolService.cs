@@ -12,55 +12,85 @@ namespace VUTTR.Service.Interfaces.Implementations
     public class ToolService : IToolService
     {
         private readonly IToolRepository _toolRepository;
+        private readonly ITagRepository _tagRepository;
         private readonly IMapper _mapper;
 
-        public ToolService(IToolRepository repo, IMapper map)
+        public ToolService(IToolRepository repo, ITagRepository tagRepository, IMapper map)
         {
             _mapper = map;
+            _tagRepository = tagRepository;
             _toolRepository = repo;
-        }
-
-        public Task<bool> Delete(int ToolId)
-        {
-            return _toolRepository.Delete(ToolId);
-        }
-
-        public async Task<List<ToolViewModel>> GetAll()
-        {
-            List<Tool> toolsModel = await _toolRepository.GetAll();
-            return _mapper.Map<List<ToolViewModel>>(toolsModel);
         }
 
         public async Task<ToolViewModel> GetById(int ToolId)
         {
-            Tool toolsModel = await _toolRepository.GetById(ToolId);
-            return _mapper.Map<ToolViewModel>(toolsModel);
+            var tool = await _toolRepository.GetOne(x => x.Id == ToolId, x => x.Tags);
+            return _mapper.Map<ToolViewModel>(tool);
+        }
+
+        public async Task<bool> Delete(int ToolId)
+        {
+            var tool = await _toolRepository.GetOne(x => x.Id == ToolId);
+            await _toolRepository.Delete(tool);
+            return true;
+        }
+
+        public async Task<List<ToolViewModel>> GetAll()
+        {
+            var tools = await _toolRepository.Get(x => x.Id > 0, x => x.Tags);
+            return _mapper.Map<List<ToolViewModel>>(tools);
         }
 
         public async Task<List<ToolViewModel>> GetByTag(string search)
         {
-            List<Tool> listToolsFilter = new List<Tool>();
-            List<Tool> toolsListModel = await _toolRepository.GetByTag(search);
+            var listToolsFilter = new List<Tool>();
+            var toolsListModel = await _toolRepository.Get(x => x.Tags.Any(y => y.Description.Contains(search)));
 
             // removendo itens iguais
             listToolsFilter = toolsListModel.Distinct().ToList();
-            
+
             return _mapper.Map<List<ToolViewModel>>(listToolsFilter);
         }
 
         public async Task<ToolViewModel> Insert(ToolViewModel Obj)
         {
-            Tool objModel = _mapper.Map<Tool>(Obj);
+            var objModel = _mapper.Map<Tool>(Obj);
             return _mapper.Map<ToolViewModel>(await _toolRepository.Insert(objModel));
         }
 
         public async Task<ToolViewModel> Update(ToolViewModel Obj)
         {
-            Tool objModel = _mapper.Map<Tool>(Obj);
-            foreach (var tag in objModel.Tags)
-                tag.Tool = objModel;
+            var model = _mapper.Map<Tool>(Obj);
+            var tagsNaBase = (await _tagRepository.Get(x => x.ToolId == model.Id)).ToList();
 
-            return _mapper.Map<ToolViewModel>(await _toolRepository.Update(objModel));
+            var tagsParaInserir = new List<Tag>();
+            var tagsParaAtualizar = new List<Tag>();
+
+            foreach (var tag in model.Tags)
+            {
+                var tagExistente = tagsNaBase
+                    .Where(c => c.Id == tag.Id && c.Id != default(int))
+                    .SingleOrDefault();
+
+                if (tagExistente != null) // Update
+                {
+                    if (tagExistente.Description != tag.Description)
+                        tagsParaAtualizar.Add(tag.Clone());
+                }
+                else // Insert
+                {
+                    tagsParaInserir.Add(tag.Clone());
+                }
+            }
+
+            if (tagsParaInserir.Count > 0)
+                await _tagRepository.Insert(tagsParaInserir);
+
+            if (tagsParaAtualizar.Count > 0)
+                await _tagRepository.Update(tagsParaAtualizar);
+
+            model.Tags = null;
+            return _mapper.Map<ToolViewModel>(await _toolRepository.Update(model));
         }
     }
 }

@@ -42,7 +42,7 @@ namespace VUTTR.API
 
             services.AddSingleton(tokenConfigurations);
 
-            var mapperConfig = new MapperConfiguration(mc => mc.AddProfile(new MapConfiguration()) );
+            var mapperConfig = new MapperConfiguration(mc => mc.AddProfile(new MapConfiguration()));
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
 
@@ -50,7 +50,8 @@ namespace VUTTR.API
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options => {
+            }).AddJwtBearer(options =>
+            {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -71,10 +72,10 @@ namespace VUTTR.API
                     .RequireAuthenticatedUser().Build());
             });
 
-            var connectionString = Configuration.GetConnectionString("DefaultConnectionExpress");
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<VUTTRContext>(options =>
-                options.UseSqlServer( connectionString, b => b.MigrationsAssembly("VUTTR.API")));
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly("VUTTR.API")));
 
             services.AddCors();
 
@@ -83,6 +84,7 @@ namespace VUTTR.API
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
 
@@ -91,24 +93,25 @@ namespace VUTTR.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "VUTTR.API", Version = "v1" });
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
-                    In = ParameterLocation.Header, 
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
                     Description = "Enter the Jwt code in the field below.",
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey 
+                    Type = SecuritySchemeType.ApiKey
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                { 
-                    new OpenApiSecurityScheme 
-                    { 
-                    Reference = new OpenApiReference 
-                    { 
+                {
+                    new OpenApiSecurityScheme
+                    {
+                    Reference = new OpenApiReference
+                    {
                         Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer" 
-                    } 
+                        Id = "Bearer"
+                    }
                     },
-                    new string[] { } 
-                    } 
+                    new string[] { }
+                    }
                 });
 
             });

@@ -2,7 +2,9 @@ namespace VUTTR.Domain.ViewModels
 {
     public class TagViewModel
     {
-        public int id { get; set; }
-        public string description { get; set; }
+        public int? Id { get; set; }
+        public int? ToolId { get; set; }
+        public string Description { get; set; }
+        public bool Ativo { get; set; }
     }
 }

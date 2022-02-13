@@ -35,8 +35,8 @@ namespace VUTTR.Service.Interfaces.Implementations
                 return Base64ToString(user.Password);
             });
 
-            User model = _mapper.Map<User>(user);
-            User userModel = await _userRepository.Login(model);
+            var model = _mapper.Map<User>(user);
+            var userModel = await _userRepository.Login(model);
 
             if (userModel == null) return null;
 
@@ -52,10 +52,10 @@ namespace VUTTR.Service.Interfaces.Implementations
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(_configuration.DaysToExpiry);
 
-            await _userRepository.RefreshUserInfo(model);
+            await _userRepository.RefreshUserInfo(userModel);
 
-            DateTime createDate = DateTime.Now;
-            DateTime ExpirationDate = createDate.AddMinutes(_configuration.Minutes);
+            var createDate = DateTime.Now;
+            var ExpirationDate = createDate.AddMinutes(_configuration.Minutes);
 
             userModel.Password = null;
             return new TokenViewModel(
@@ -81,8 +81,8 @@ namespace VUTTR.Service.Interfaces.Implementations
                 return Base64ToString(user.Password);
             });
 
-            User model = _mapper.Map<User>(user);
-            UserViewModel modelUserName = await this.GetByUserName(user.UserName);
+            var model = _mapper.Map<User>(user);
+            var modelUserName = await this.GetByUserName(user.UserName);
             if (modelUserName != null)
                 throw new Exception("Usuário já existente!");
 
@@ -94,20 +94,20 @@ namespace VUTTR.Service.Interfaces.Implementations
         {
             if (user.Password == null)
             {
-                var modelComPassword = await this.GetById(user.UserId, true);
+                var modelComPassword = await this.GetById(user.Id.GetValueOrDefault(), true);
                 user.Password = modelComPassword.Password;
             }
             else
             {
                 user.Password = _userRepository.ComputeHash(user.Password, new SHA256CryptoServiceProvider());
             }
-            User model = _mapper.Map<User>(user);
+            var model = _mapper.Map<User>(user);
             return _mapper.Map<UserViewModel>(await _userRepository.Update(model));
         }
 
         public async Task<UserViewModel> GetById(int UserId, bool notIncludePassword)
         {
-            User model = await _userRepository.GetById(UserId);
+            var model = await _userRepository.GetById(UserId);
             if (model is not null && notIncludePassword)
                 model.Password = null;
 
@@ -116,7 +116,7 @@ namespace VUTTR.Service.Interfaces.Implementations
 
         public async Task<UserViewModel> GetByUserName(string userName)
         {
-            User model = await _userRepository.GetByUserName(userName);
+            var model = await _userRepository.GetByUserName(userName);
             if (model == null)
             {
                 return null;

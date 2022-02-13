@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using VUTTR.Domain.Models;
 
@@ -6,33 +5,39 @@ namespace VUTTR.Data.Context
 {
     public class VUTTRContext : DbContext
     {
-        public VUTTRContext(DbContextOptions<VUTTRContext> options) : base(options)  
-        {  }  
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public VUTTRContext(DbContextOptions<VUTTRContext> options) : base(options)
+        { }
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            var modelBuildUser = modelBuilder.Entity<User>();
-            modelBuildUser.ToTable("user");
-            modelBuildUser.HasKey(x => x.UserId);
-            modelBuildUser.Property(x => x.UserId).ValueGeneratedOnAdd();
+            #region User
+            builder.Entity<User>().ToTable("TB_VUTTR_User");
+            builder.Entity<User>().HasKey(x => x.Id);
+            builder.Entity<User>().Property(x => x.Id).ValueGeneratedOnAdd();
+            #endregion
 
-            var modelBuildTool = modelBuilder.Entity<Tool>();
-            modelBuildTool.ToTable("tool");
-            modelBuildTool.HasKey(x => x.id);
-            modelBuildTool.Property(x => x.id).ValueGeneratedOnAdd();
-            modelBuildTool.HasMany(x => x.Tags)
-                .WithOne(x => x.Tool);
+            #region Tool
+            builder.Entity<Tool>().ToTable("TB_VUTTR_Tool");
+            builder.Entity<Tool>().HasKey(x => x.Id);
+            builder.Entity<Tool>().Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.Entity<Tool>()
+                .HasMany(x => x.Tags)
+                .WithOne(x => x.Tool)
+                .HasForeignKey(x => x.ToolId);
+            #endregion
 
-            var modelBuildTag = modelBuilder.Entity<Tag>();
-            modelBuildTag.ToTable("tag");
-            modelBuildTag.HasKey(x => x.id);
-            modelBuildTag.Property(x => x.id).ValueGeneratedOnAdd();
-            modelBuildTag.HasOne(x => x.Tool)
-                .WithMany( x => x.Tags);            
+            #region Tag
+            builder.Entity<Tag>().ToTable("TB_VUTTR_Tag");
+            builder.Entity<Tag>().HasKey(x => x.Id);
+            builder.Entity<Tag>().Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.Entity<Tag>()
+                .HasOne(x => x.Tool)
+                .WithMany(x => x.Tags)
+                .HasForeignKey(x => x.ToolId);
+            #endregion
         }
 
-        public DbSet<Tool> Tools { get; set; }  
-        public DbSet<Tag> Tags { get; set; }  
-        public DbSet<User> Users { get; set; }  
+        public DbSet<Tool> Tools { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

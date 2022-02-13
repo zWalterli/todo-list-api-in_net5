@@ -21,51 +21,57 @@ namespace VUTTR.API.Migrations
 
             modelBuilder.Entity("VUTTR.Domain.Models.Tag", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Toolid")
-                        .HasColumnType("int");
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("description")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("id");
+                    b.Property<int>("ToolId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("Toolid");
+                    b.HasKey("Id");
 
-                    b.ToTable("tag");
+                    b.HasIndex("ToolId");
+
+                    b.ToTable("TB_VUTTR_Tag");
                 });
 
             modelBuilder.Entity("VUTTR.Domain.Models.Tool", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("description")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("link")
+                    b.Property<string>("Link")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("title")
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.ToTable("tool");
+                    b.ToTable("TB_VUTTR_Tool");
                 });
 
             modelBuilder.Entity("VUTTR.Domain.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
                         .HasColumnType("nvarchar(max)");
@@ -82,16 +88,18 @@ namespace VUTTR.API.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
-                    b.ToTable("user");
+                    b.ToTable("TB_VUTTR_User");
                 });
 
             modelBuilder.Entity("VUTTR.Domain.Models.Tag", b =>
                 {
                     b.HasOne("VUTTR.Domain.Models.Tool", "Tool")
                         .WithMany("Tags")
-                        .HasForeignKey("Toolid");
+                        .HasForeignKey("ToolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Tool");
                 });
